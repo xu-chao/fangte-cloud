@@ -1,4 +1,4 @@
-# Spring Cloud Template 分布式微服务系统 -- 前端
+# Spring Cloud Vue 分布式微服务系统 -- 前端
 
 **注意**
 
@@ -66,27 +66,13 @@ after: require('./mock/mock-server.js')
 
 ### 登录接口
 
-如果你对Security-OAuth2还不熟悉，建议看下我之前写的文档：
-
-1.  [Spring Security OAuth2概念引入](https://www.tycoding.cn/2019/04/22/boot/spring-boot-security-oauth2-start/)
-2.  [Spring Security OAuth2实战](https://tycoding.cn/2019/04/22/boot/spring-boot-security-oauth2/)
-3.  [Spring Security OAuth2数据持久化](https://www.tycoding.cn/2019/04/23/boot/spring-boot-security-oauth2-db/)
-
-Security-OAuth2中提供的默认获取Token的接口：`/oauth/token`，下面是使用Postman工具模拟请求的示例图：
-
-![](doc/2019052872704.png)
-
-![](doc/2019052872808.png)
-
-![](doc/2019052872828.png)
+如果你对Security-OAuth2还不熟悉，建议先学习：
 
 >   `/oauth/token`接口是谁提供的？
 
 ​		切记，`/oauth/token`接口是Security-OAuth2内部提供的获取Token的接口，这个接口不需要我们手动定义，并且即使使用了Spring Security，`/oauth`开头的接口也应为是内置的不会被拦截，所以我们也无需特殊配置Spring Security 不拦截这个接口。
 
 >   `/oauth/token`登录请求需要传入什么参数？
-
-​		关于这点可以看下我的 [博客](https://tycoding.cn/) 中之前介绍OAuth2的文章。我们需要手动提供：
 
 1.  `username` 登录账户
 2.  `password` 登录密码。这并不是必须的，但由于我们使用的OAuth的**密码**模式，所以需要定义
@@ -95,11 +81,11 @@ Security-OAuth2中提供的默认获取Token的接口：`/oauth/token`，下面�
 
 >   `/oauth/token` 响应什么数据？
 
-​		如上图，请求一般响应如下信息：
+​		如上图，请求一般响应如下信息：（可使用Postman进行测试验证！）
 
 ```json
 {
-    "access_token": "f59359c1-86c0-48a3-b060-ff97e5163bb2",
+    "access_token": "5092a0d2-2905-4682-9668-e4c6fb4fe62e",
     "token_type": "bearer",
     "expires_in": 22531,
     "scope": "app"
@@ -188,7 +174,7 @@ const actions = {
 
 ​		当然，按照OAuth2协议的规定，想要获取应用信息必须先请求`/oauth/token`获取令牌Token值，而想要获取令牌Token除了`username` `password` `grant_type`信息，还要告诉OAuth2这是哪个客户端的请求，所以在请求`/oauth/token`接口时需要携带客户端信息。
 
-​		这一点在 [Spring Security OAuth2实战](https://tycoding.cn/2019/04/22/spring-boot-security-oauth2/) 一文中我有详细介绍过。所以在`vue-admin-template`前端项目中，想要实现所有请求都携带客户端信息，就需要全局设置请求头参数，所以，我们直接在 `src/main.js` 中全局设置Axios 默认请求头参数：
+​	  所以在`vue-admin-template`前端项目中，想要实现所有请求都携带客户端信息，就需要全局设置请求头参数，所以，我们直接在 `src/main.js` 中全局设置Axios 默认请求头参数：
 
 ```javascript
 import axios from 'axios'
@@ -199,15 +185,10 @@ axios.defaults.headers.post['Authorization'] = 'Basic Y2xpZW50OnNlY3JldA==';
 
 ### 测试
 
-上面基本介绍了登录请求的流程和注意事项，下面使用浏览器F12看一下实际的请求信息：
-
-![](doc/2019052880003.png)
-
-![](doc/2019052880030.png)
+上面基本介绍了登录请求的流程和注意事项：
 
 如果登录请求响应成功，想要进入系统的第二关就是调用获取用户信息的接口，全局设置用户信息(用户名、头像…) 。所以，`vue-admin-template`会立即再请求获取用户信息的接口：
 
-![](doc/2019052880107.png)
 
 可看到，如果登录成功，可携带`access_token`访问应用的其他接口，只需要在请求时将请求头`Authorization`设置为`access_token`信息即可。
 
@@ -266,15 +247,11 @@ export function findById(id) {
 
 ## 分页查询
 
-如果没有使用Vue+ElementUI实现分页查询经验的朋友可以先看下我的这篇文章：
-
-[Vue+ElementUI+SpringMVC实现分页](https://www.tycoding.cn/2018/07/30/vue-6/)
+使用Vue+ElementUI实现分页查询
 
 `vue-admin-template`的作者其实提供好了一个`pagination`分页组件，是对Element-UI的`<el-pagination>`控件的封装。作者封装的这个组件是通用的，可以在项目的任何需要分页的位置使用，非常方便。如何食用呢？
 
 1.  在`src/components`下引入该组件
-
-![](cloud-template-app/20190528211740.png)
 
 2.  在`src/api/user.js`中定义分页查询接口
 
@@ -427,8 +404,6 @@ methods: {
 ### 栗子
 
 1.  除了创建用户管理的组件，新增一个封装了用户信息编辑框的组件：
-
-![](doc/20190528213839.png)
 
 其中的`save.vue`就是封装了用户信息编辑框的组件。
 
